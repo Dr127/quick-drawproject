@@ -1,0 +1,12 @@
+body{
+    background-color: aqua;
+}
+#player_score{
+    font-size: 20px;
+    margin-left: 10px;
+}
+#timer{
+    font-size: 20px;
+   float: right;
+   margin-right: 10px;
+}
