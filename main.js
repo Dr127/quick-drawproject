@@ -12,7 +12,9 @@ score =0;
 function draw(){
 check_sketch();
 }
-
+function preload(){
+    classifier = ml5.imageClassifier('DoodleNet')
+}
 function updateCanvas(){
     background("white");
     random_number = Math.floor(Math.random()*quick_draw_data_set.length);
@@ -24,6 +26,28 @@ function setup(){
     canvas = createCanvas(280,280)
     canvas.center();
     background("white");
+}
+function draw() {
+    strokeWeight(5);
+    color(0,0,255);
+    if(mouseIsPressed){
+        line(pmouseX, pmouseY, mouseX, mouseY);
+    }
+}
+function classifyCanvas() {
+    classifier.classify(canvas, gotResult);
+}
+function gotResult(error,result){
+    if(error){
+        console.error(error)
+    }
+    console.log(results);
+
+    drawn_sketch = results[0].label;
+
+    document.getElementById("user_sketch").innerHTML =  "Your Sketch" + drawn_sketch;
+    document.getElementById("sketch").innerHTML = Math.round(result[0],confidence*100)+ "%";
+
 }
 function check_sketch(){
     timer_counter = timer_counter + 1;
