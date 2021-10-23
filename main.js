@@ -17,7 +17,7 @@ function preload(){
 }
 function updateCanvas(){
     background("white");
-    random_number = Math.floor(Math.random()*quick_draw_data_set.length);
+    random_number = Math.floor((Math.random()*quick_draw_data_set.length)+ 1);
     console.log(quick_draw_data_set[random_number]);
     sketch = quick_draw_data_set[random_number];
     document.getElementById("actual_sketch").innerHTML = "Sketch to be drawn: " + sketch;    
@@ -26,18 +26,25 @@ function setup(){
     canvas = createCanvas(280,280)
     canvas.center();
     background("white");
+    canvas.mouseReleased(classifyCanvas);
 }
 function draw() {
     strokeWeight(5);
-    color(0,0,255);
+    stroke("blue");
     if(mouseIsPressed){
         line(pmouseX, pmouseY, mouseX, mouseY);
+    }
+    check_sketch();
+    if(drawn_sketch == sketch){
+answer_holder = "set";
+score++;
+document.getElementById('score').innerHTML = 'Score:' + score;
     }
 }
 function classifyCanvas() {
     classifier.classify(canvas, gotResult);
 }
-function gotResult(error,result){
+function gotResult(error,results){
     if(error){
         console.error(error)
     }
@@ -45,19 +52,22 @@ function gotResult(error,result){
 
     drawn_sketch = results[0].label;
 
-    document.getElementById("user_sketch").innerHTML =  "Your Sketch" + drawn_sketch;
-    document.getElementById("sketch").innerHTML = Math.round(result[0],confidence*100)+ "%";
-
+    document.getElementById("user_sketch").innerHTML =  "Your Sketch " + drawn_sketch;
+    document.getElementById("sketch").innerHTML = "Confidence: " + Math.round(results[0].confidence*100)+ "%";
+    if(drawn_sketch != sketch){
+        document.getElementById("user_sketch").style.color = "red";
+    document.getElementById("sketch").style.color = "red";
+    }
 }
 function check_sketch(){
-    timer_counter = timer_counter + 1;
+    timer_counter++;
     document.getElementById("timer").innerHTML ="Timer" + timer_counter;
     console.log(timer_counter);
     if(timer_counter > 400){
         timer_counter = 0;
         timer_check ="completed";
     }
-    if(timer_check == "completed"){
+    if(timer_check == "completed" || answer_holder == "set"){
       timer_check = "";
       answer_holder ="";
       updateCanvas();  
